@@ -32,15 +32,16 @@ public class Window extends JFrame implements ActionListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		init();
-		refreshButtons();
+		
 		setVisible(true);
+		
+		new Thread(display).start();
 	}
 	
 	private void init() {
 		
 		display = new Display();
 		display.setSize(300,180);
-		new Thread(display).start();
 		add(display);
 		
 		nextStep = new JButton(">");
@@ -69,6 +70,7 @@ public class Window extends JFrame implements ActionListener {
 		displayStep.setLocation(getWidth()/2 - 20/2, 180);
 		add(displayStep);
 		
+		refreshButtons();
 	}
 	
 	public void refreshButtons() {
