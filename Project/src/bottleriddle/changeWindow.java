@@ -113,35 +113,58 @@ public class changeWindow extends JFrame implements ActionListener {
 		return bottles;
 	}
 	
-	private boolean validateEntries() {
-		boolean result = true;
+	private void validateEntries() throws Exception {
+		int target = -1;
 		try {
-			if (Integer.parseInt(targetField.getText()) > Handler.MAX_VOLUME) {
-				result = false;
-			}
-			for (int i = 0; i < Handler.NUM_BOTTLES; i++) {
-				if (Integer.parseInt(maxCapacityField[i].getText()) > Handler.MAX_VOLUME) {
-					result = false;
-				}
-				if (Integer.parseInt(contentField[i].getText()) > Handler.MAX_VOLUME) {
-					result = false;
-				}
-				if (Integer.parseInt(contentField[i].getText()) > Integer.parseInt(maxCapacityField[i].getText())){
-					result = false;
-				}
-			}
+			target = Integer.parseInt(targetField.getText());
 		} catch (Exception e) {
-			result = false;
+			throw new Exception("El objetivo no es un numero valido.");
 		}
-		return result;
+		if (target > Handler.MAX_VOLUME) {
+			throw new Exception("El objetivo es mayor al volumen maximo.");
+		} else if (target < 0) {
+			throw new Exception("El objetivo es negativo.");
+		}
+		for (int i = 0; i < Handler.NUM_BOTTLES; i++) {
+			int capacidad = -1;
+			try {
+				capacidad = Integer.parseInt(maxCapacityField[i].getText());
+			} catch (Exception e) {
+				throw new Exception("Una capacidad no es un numero valido.");
+			}
+			if (capacidad > Handler.MAX_VOLUME) {
+				throw new Exception("Una capacidad es mayor al volumen maximo.");
+			} else if (capacidad < 0) {
+				throw new Exception("Una capacidad es negativa.");
+			}
+			
+			int contenido = -1;
+			try {
+				contenido = Integer.parseInt(contentField[i].getText());
+			} catch (Exception e) {
+				throw new Exception("Un contenido no es un numero valido.");
+			}
+			if (contenido > Handler.MAX_VOLUME) {
+				throw new Exception("Un contenido es mayor al volumen maximo.");
+			} else if (contenido < 0) {
+				throw new Exception("Un contenido es negativo.");
+			}
+			
+			if (contenido > capacidad){
+				throw new Exception("Un contenido es mayor a su capacidad.");
+			}
+		}
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == sendBtn) {
-			if (validateEntries()) {
+			try {
+				validateEntries();
 				Handler.changeData(buildBottles(),Integer.parseInt(targetField.getText()));
 				this.setVisible(false);
+			} catch (Exception ex) {
+				javax.swing.JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
